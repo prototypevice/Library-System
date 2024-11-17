@@ -8,8 +8,10 @@ public class MainGUI extends JFrame {
     private JPanel bottomPanel;
     private JLabel titleLabel;
     private JButton logOutButton;
+    private JButton darkModeButton;
     private JPanel manageUserPage;
     private JPanel viewUserProfilePage;
+    private JPanel addUserPage;
 
     public MainGUI() {
         setTitle("Library Management System");
@@ -35,6 +37,10 @@ public class MainGUI extends JFrame {
         // Initialize ViewUserProfilePage and add to backgroundPanel
         setUpViewUserProfilePage();
         backgroundPanel.add(viewUserProfilePage, "ViewUserProfilePage");
+
+        // Initialize AddUserPage and add to backgroundPanel
+        setupAddUserPage();
+        backgroundPanel.add(addUserPage, "AddUserPage");
 
 
         // Initialize with light mode
@@ -72,7 +78,7 @@ public class MainGUI extends JFrame {
         mainPanel.add(checkBookButton, gbc);
 
         // Add Dark Mode Toggle Icon
-        JButton darkModeButton = new JButton("🌙");
+        darkModeButton = new JButton("🌙");
         darkModeButton.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         darkModeButton.setContentAreaFilled(false);
         darkModeButton.setFocusPainted(false);
@@ -104,19 +110,20 @@ public class MainGUI extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 0;
 
-        // Add Book Button
-        JButton addBookButton = createStyledButton("Add User");
-        buttonPanel.add(addBookButton, gbc);
+        // Add User Button
+        JButton addUserButton = createStyledButton("Add User");
+        addUserButton.addActionListener(e -> switchToAddUserPage());
+        buttonPanel.add(addUserButton, gbc);
 
         gbc.gridy++;
-        // Remove Book Button
-        JButton removeBookButton = createStyledButton("Remove User");
-        buttonPanel.add(removeBookButton, gbc);
+        // Remove User Button
+        JButton removeUserButton = createStyledButton("Remove User");
+        buttonPanel.add(removeUserButton, gbc);
 
         gbc.gridy++;
-        // Update Book Button
-        JButton updateBookButton = createStyledButton("Update User");
-        buttonPanel.add(updateBookButton, gbc);
+        // Update User Button
+        JButton updateUserButton = createStyledButton("Update User");
+        buttonPanel.add(updateUserButton, gbc);
 
         manageUserPage.add(buttonPanel, BorderLayout.CENTER);
 
@@ -128,6 +135,119 @@ public class MainGUI extends JFrame {
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         bottomPanel.add(returnButton);
         manageUserPage.add(bottomPanel, BorderLayout.SOUTH);
+    }
+
+    private void setupAddUserPage() {
+        addUserPage = new JPanel(new BorderLayout());
+        addUserPage.setBackground(Color.white);
+
+        // Icon and Title
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setBackground(Color.white);
+
+        // User Icon that is scaled and sized properly
+        ImageIcon userIconImage = new ImageIcon("src/user_icon.png");
+        Image scaledIconImage = userIconImage.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        JLabel userIcon = new JLabel(new ImageIcon(scaledIconImage), SwingConstants.CENTER);
+
+        // Create a container with padding for the user icon
+        JPanel userIconContainer = new JPanel(new BorderLayout());
+        userIconContainer.setBackground(Color.white);
+        userIconContainer.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0)); // Add 20px padding at the top
+        userIconContainer.add(userIcon, BorderLayout.CENTER);
+
+        JLabel titleLabel = new JLabel("Add Account", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 28));
+        titleLabel.setForeground(Color.BLACK);
+        titleLabel.setBackground(Color.white);
+
+        // Adds all the icon and title to the top panel
+        topPanel.add(userIconContainer, BorderLayout.CENTER);
+        topPanel.add(titleLabel, BorderLayout.SOUTH);
+        addUserPage.add(topPanel, BorderLayout.NORTH);
+
+        // Creates new text fields for the creation of an account.
+        JPanel centerPanel = new JPanel(new GridBagLayout());
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 50, 20, 50));
+        centerPanel.setBackground(Color.white);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+
+        // Adding labels and text fields with fixed size
+        JTextField firstNameField = createFixedSizeTextField();
+        JTextField lastNameField = createFixedSizeTextField();
+        JTextField contactNumberField = createFixedSizeTextField();
+        JTextField usernameField = createFixedSizeTextField();
+        JPasswordField passwordField = createFixedSizePasswordField();
+        JPasswordField confirmPasswordField = createFixedSizePasswordField();
+
+        centerPanel.add(new JLabel("First Name:"), gbc);
+        gbc.gridx = 1;
+        centerPanel.add(firstNameField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        centerPanel.add(new JLabel("Last Name:"), gbc);
+        gbc.gridx = 1;
+        centerPanel.add(lastNameField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        centerPanel.add(new JLabel("Contact Number:"), gbc);
+        gbc.gridx = 1;
+        centerPanel.add(contactNumberField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        centerPanel.add(new JLabel("Username:"), gbc);
+        gbc.gridx = 1;
+        centerPanel.add(usernameField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        centerPanel.add(new JLabel("Password:"), gbc);
+        gbc.gridx = 1;
+        centerPanel.add(passwordField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        centerPanel.add(new JLabel("Confirm Password:"), gbc);
+        gbc.gridx = 1;
+        centerPanel.add(confirmPasswordField, gbc);
+
+        addUserPage.add(centerPanel, BorderLayout.CENTER);
+
+        addUserPage.add(centerPanel, BorderLayout.CENTER);
+
+        // Creates the buttons like the back button and create account button.
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        bottomPanel.setBackground(Color.white);
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+
+        JButton backButton = new JButton("Back");
+        backButton.setPreferredSize(new Dimension(150, 40));
+        backButton.addActionListener(e -> {
+            switchToManageUserPage();
+            logOutButton.setVisible(true); // Show logout button when returning
+        });
+
+        JButton createAccountButton = new JButton("Create Account");
+        createAccountButton.setPreferredSize(new Dimension(150, 40));
+
+        bottomPanel.add(backButton);
+        bottomPanel.add(createAccountButton);
+
+        // Place buttons in the bottom panel
+        bottomPanel.add(backButton, BorderLayout.WEST);
+        bottomPanel.add(createAccountButton, BorderLayout.EAST);
+
+        addUserPage.add(bottomPanel, BorderLayout.SOUTH);
+
+        backgroundPanel.add(addUserPage, "AddUserPage");
     }
 
     private void setUpViewUserProfilePage() {
@@ -182,6 +302,18 @@ public class MainGUI extends JFrame {
         return button;
     }
 
+    private JTextField createFixedSizeTextField() {
+        JTextField textField = new JTextField();
+        textField.setPreferredSize(new Dimension(200, 25));
+        return textField;
+    }
+
+    private JPasswordField createFixedSizePasswordField() {
+        JPasswordField passwordField = new JPasswordField();
+        passwordField.setPreferredSize(new Dimension(200, 25));
+        return passwordField;
+    }
+
     private void toggleDarkMode() {
         if (isDarkMode) {
             applyLightMode();
@@ -210,16 +342,30 @@ public class MainGUI extends JFrame {
     }
 
     public void switchToMainPage() {
+        logOutButton.setVisible(true);
+        darkModeButton.setVisible(true);
         CardLayout cl = (CardLayout) backgroundPanel.getLayout();
         cl.show(backgroundPanel, "MainPage");
     }
 
     private void switchToManageUserPage() {
+        darkModeButton.setVisible(false);
+        logOutButton.setVisible(false);
         CardLayout cl = (CardLayout) backgroundPanel.getLayout();
         cl.show(backgroundPanel, "ManageUserPage");
     }
 
+    private void switchToAddUserPage() {
+        darkModeButton.setVisible(false);
+        logOutButton.setVisible(false);
+        CardLayout cl = (CardLayout) backgroundPanel.getLayout();
+        cl.show(backgroundPanel, "AddUserPage");
+    }
+
+
     private void switchToViewUserProfilePage() {
+        logOutButton.setVisible(false);
+        darkModeButton.setVisible(false);
         CardLayout cl = (CardLayout) backgroundPanel.getLayout();
         cl.show(backgroundPanel, "ViewUserProfilePage");
     }
