@@ -138,6 +138,7 @@ public class MainGUI extends JFrame {
     }
 
     private void setupAddUserPage() {
+
         addUserPage = new JPanel(new BorderLayout());
         addUserPage.setBackground(Color.white);
 
@@ -232,11 +233,40 @@ public class MainGUI extends JFrame {
         backButton.setPreferredSize(new Dimension(150, 40));
         backButton.addActionListener(e -> {
             switchToManageUserPage();
-            logOutButton.setVisible(true); // Show logout button when returning
+            logOutButton.setVisible(false); // Show logout button when returning
         });
 
         JButton createAccountButton = new JButton("Create Account");
         createAccountButton.setPreferredSize(new Dimension(150, 40));
+        createAccountButton.addActionListener(e -> {
+           String firstName = firstNameField.getText();
+           String lastName = lastNameField.getText();
+           String contactNumber = contactNumberField.getText();
+           String username = usernameField.getText();
+           String password = new String(passwordField.getPassword());
+           String confirmPassword = new String(confirmPasswordField.getPassword());
+
+            if (firstName.isEmpty() || lastName.isEmpty() || contactNumber.isEmpty() || username.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please fill out all fields.", "Error", JOptionPane.ERROR_MESSAGE);
+            } else if (!password.equals(confirmPassword)) {
+                JOptionPane.showMessageDialog(this, "Passwords do not match.", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                User user = new User(firstName, lastName, contactNumber, username, password);
+                boolean success = AddUser.saveUser(user);
+
+                if (success) {
+                    JOptionPane.showMessageDialog(this, "User successfully added!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    firstNameField.setText("");
+                    lastNameField.setText("");
+                    contactNumberField.setText("");
+                    usernameField.setText("");
+                    passwordField.setText("");
+                    confirmPasswordField.setText("");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Failed to add user. Please try again." , "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
 
         bottomPanel.add(backButton);
         bottomPanel.add(createAccountButton);
@@ -304,13 +334,13 @@ public class MainGUI extends JFrame {
 
     private JTextField createFixedSizeTextField() {
         JTextField textField = new JTextField();
-        textField.setPreferredSize(new Dimension(200, 25));
+        textField.setPreferredSize(new Dimension(300, 30));
         return textField;
     }
 
     private JPasswordField createFixedSizePasswordField() {
         JPasswordField passwordField = new JPasswordField();
-        passwordField.setPreferredSize(new Dimension(200, 25));
+        passwordField.setPreferredSize(new Dimension(300, 30));
         return passwordField;
     }
 
